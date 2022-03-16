@@ -293,7 +293,7 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
 {
     map <int, int> matchBoxes;
 
-    /* For every keypoint match in matches verify if it's in both current and previous frame. */
+    /* For every keypoint match in matches verify if it's in both current and previous frame bounding box. */
     /* If yes, collect the boxID's for current and previous Frame bounding boxes */
     for (const auto keyPtMatch : matches)
     {
