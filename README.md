@@ -239,7 +239,7 @@ This exercise is about conducting tests with the final project code, especially 
 Look for several examples where the Lidar-based TTC estimate is way off. 
 
 * Example 1 - This picture shows that the lidar points shifted from the bumper to hatch
-<img src="images/IncorrectLidar1.png" width="1042" height="371" />
+<img src="images/IncorrectLidar1.png" width="779" height="371" />
 
 * Example 2 - This picture shows that some lidar points shifted around the license plate and there seems to be some noise around the license plate points
-<img src="images/IncorrectLidar2.png" width="1042" height="371" />
+<img src="images/IncorrectLidar2.png" width="779" height="371" />
