@@ -34,8 +34,9 @@ In this final project, you will implement the missing parts in the schematic. To
 2. Make a build directory in the top level project directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make`
 4. Run it: `./3D_object_tracking`.
+>
 
-#### Task 1 - match list of 3D objects between current and previous frame (implement ->matchBoundingBoxes)
+### Task 1 - match list of 3D objects between current and previous frame (implement ->matchBoundingBoxes)
 ```c++
 void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bbBestMatches, DataFrame &prevFrame, DataFrame &currFrame)
 {
@@ -92,7 +93,7 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
 }
 ```
 
-#### Task 2 - compute time-to-collision based on Lidar data (implement -> computeTTCLidar)
+### Task 2 - compute time-to-collision based on Lidar data (implement -> computeTTCLidar)
 ```c++
 void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
                      std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
@@ -124,7 +125,7 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
 }
 ```
 
-#### Task 3 - assign enclosed keypoint matches to bounding box (implement -> clusterKptMatchesWithROI)
+### Task 3 - assign enclosed keypoint matches to bounding box (implement -> clusterKptMatchesWithROI)
 ```c++
 void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, std::vector<cv::DMatch> &kptMatches)
 {
@@ -166,7 +167,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
 }
 ```
 
-#### Task 4 - compute time-to-collision based on camera (implement -> computeTTCCamera)
+### Task 4 - compute time-to-collision based on camera (implement -> computeTTCCamera)
 ```c++
 void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, 
                       std::vector<cv::DMatch> kptMatches, double frameRate, double &TTC)
