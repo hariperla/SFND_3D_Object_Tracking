@@ -229,7 +229,6 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
         medianDistRatio = distRatios[distRatios.size()/2];
     }
 
-    double dT = 1 / frameRate;
     TTC = -dT / (1 - medianDistRatio);
 }
 ```
