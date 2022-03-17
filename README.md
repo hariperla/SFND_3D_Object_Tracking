@@ -232,3 +232,11 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
     TTC = -dT / (1 - medianDistRatio);
 }
 ```
+
+### Task 5 - Performance Eval Part 1
+```
+This exercise is about conducting tests with the final project code, especially with regard to the Lidar part. Look for several examples where you have the impression that the Lidar-based TTC estimate is way off. 
+
+* Example 1
+<img src="images/IncorrectLidar1.png" width="1042" height="371" />
+```
