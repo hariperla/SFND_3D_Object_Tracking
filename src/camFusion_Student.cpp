@@ -2,6 +2,8 @@
 #include <iostream>
 #include <algorithm>
 #include <numeric>
+#include <opencv2/features2d.hpp>
+#include <opencv2/xfeatures2d.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
@@ -178,7 +180,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
 
 // Compute time-to-collision (TTC) based on keypoint correspondences in successive images
 void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, 
-                      std::vector<cv::DMatch> kptMatches, double frameRate, double &TTC, cv::Mat *visImg, bool bVis)
+                      std::vector<cv::DMatch> kptMatches, double frameRate, double &TTC)
 {
     // Used this code from the lesson task
 
@@ -240,22 +242,6 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
 
     double dT = 1 / frameRate;
     TTC = -dT / (1 - medianDistRatio);
-
-   /*  bVis = true;
-    if (bVis)
-    {
-        cv::Mat img;
-        cv::drawMatches(visImg, kptsPrev, visImgCurr, kptsCurr, kptMatches, img,
-                        cv::Scalar::all(-1), cv::Scalar::all(-1), vector<char>(),
-                        cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-        string windowName = "Matches between previous and current frame";
-        cv::namedWindow(windowName, 1);
-        cv::imshow(windowName, img);
-        cout << "Showing keypoints drawn for the current frame - Press any key to "
-                "continue\n";
-        cv::waitKey(0);  // wait for key to be pressed
-    }
-    bVis = false; */
 }
 
 
