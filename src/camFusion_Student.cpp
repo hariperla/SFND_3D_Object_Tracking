@@ -139,7 +139,6 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
 // associate a given bounding box with the keypoints it contains
 void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, std::vector<cv::DMatch> &kptMatches)
 {
-    // ...
     double avgDistance = 0.0;
     double sumOfDistances = 0.0;
     vector <cv::DMatch> matchesInBB;
@@ -182,9 +181,8 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
 void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, 
                       std::vector<cv::DMatch> kptMatches, double frameRate, double &TTC)
 {
-    // Used this code from the lesson task
-
-    /* compute distance ratios between all matched keypoints */
+    /* Used this code from the lesson task */
+    /* Compute distance ratios between all matched keypoints */
     vector<double> distRatios; // stores the distance ratios for all keypoints between curr. and prev. frame
 
     for (auto it1 = kptMatches.begin(); it1 != kptMatches.end() - 1; ++it1)
@@ -294,7 +292,6 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
                 currBoxID = currBox.boxID;
             }
         }
-
         /* Loop through previous frame bounding box and check for matched keypoints */
         for (const auto prevBox : prevFrame.boundingBoxes)
         {
@@ -304,7 +301,6 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
             }
             
         }
-        
         matchBoxes.insert({currBoxID,prevBoxID});
 
         /* Find best match bounding box in the previous frame for the current bounding box frame */
@@ -323,11 +319,10 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
                 }  
             }
 
-            // find the position of best prev box which has highest number of keypoint correspondences.
+            // find the position of best prev box which has highest number of keypoint.
             int maxPosition = distance(currBoxCount.begin(),
                                         max_element(currBoxCount.begin(), currBoxCount.end()));
             bbBestMatches.insert({maxPosition, i});
-            //cout<<"Current BoxID: "<<i<<" match Previous BoxID: "<<maxPosition<<endl; 
         }
     }
 }
