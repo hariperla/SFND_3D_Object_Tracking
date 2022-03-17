@@ -243,3 +243,10 @@ Look for several examples where the Lidar-based TTC estimate is way off.
 
 * Example 2 - This picture shows that some lidar points shifted around the license plate and there seems to be some noise around the license plate points
 <img src="images/IncorrectLidar2.png" width="779" height="371" />
+
+* Example 3 - Another example of points shifting from bumper to hatch and some points shifted around the license plate
+<img src="images/IncorrectLidar3.png" width="779" height="371" />
+
+### Task 6 - Peformance Eval Part 2
+
+This last exercise is about running the different detector / descriptor combinations and looking at the differences in TTC estimation
