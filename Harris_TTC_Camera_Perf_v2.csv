@@ -1,0 +1,6 @@
+DETECTOR-DESCRIPTOR,0,1,2,3,4,5,6,7,8,9,10,11,12,13
+HARRIS-BRISK,nan,10.586,-80.8525,11.755,13.2718,nan,nan,nan,nan,5.18994,13.4095,nan,-inf,-inf
+HARRIS-BRIEF,10.9082,13.3206,13.5599,10.5367,nan,20.5862,11.7414,nan,nan,nan,nan,nan,nan,
+HARRIS-ORB,-inf,34.1473,14.1981,12.3725,nan,nan,11.2142,11.9536,nan,5.66097,nan,-inf,,
+HARRIS-FREAK,nan,nan,12.7502,13.3206,nan,nan,-inf,-inf,nan,nan,nan,,,
+HARRIS-SIFT,8.81335,37.3809,13.5907,12.9162,nan,nan,nan,13.4095,5.6061,nan,-inf,,,

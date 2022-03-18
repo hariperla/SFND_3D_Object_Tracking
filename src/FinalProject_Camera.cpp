@@ -36,7 +36,7 @@ int main(int argc, const char *argv[])
     string imgFileType = ".png";
     int imgStartIndex = 0; // first file index to load (assumes Lidar and camera names have identical naming convention)
     int imgEndIndex = 18;   // last file index to load
-    int imgStepWidth = 1; 
+    int imgStepWidth = 1;
     int imgFillWidth = 4;  // no. of digits which make up the file index (e.g. img-0001.png)
 
     // object detection
@@ -74,6 +74,20 @@ int main(int argc, const char *argv[])
     vector<DataFrame> dataBuffer; // list of data frames which are held in memory at the same time
     bool bVis = false;            // visualize results
 
+    string detectorType = "SHITOMASI"; //SHITOMASI, HARRIS, SIFT, FAST, ORB, AKAZE, BRISK
+    if (argc >= 2)
+    {
+        detectorType = string(argv[1]);
+    }
+    
+    string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
+    if (argc >= 3)
+    {
+        descriptorType = string(argv[2]);
+    }
+    
+    vector <double> detDesc_TTC_Cam;
+
     /* MAIN LOOP OVER ALL IMAGES */
 
     for (size_t imgIndex = 0; imgIndex <= imgEndIndex - imgStartIndex; imgIndex+=imgStepWidth)
@@ -83,6 +97,7 @@ int main(int argc, const char *argv[])
         // assemble filenames for current index
         ostringstream imgNumber;
         imgNumber << setfill('0') << setw(imgFillWidth) << imgStartIndex + imgIndex;
+        //cout << imgNumber.str() << endl;
         string imgFullFilename = imgBasePath + imgPrefix + imgNumber.str() + imgFileType;
 
         // load image from file 
@@ -155,7 +170,6 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-        string detectorType = "FAST";
 
         if (detectorType.compare("SHITOMASI") == 0)
         {
@@ -193,7 +207,7 @@ int main(int argc, const char *argv[])
         /* EXTRACT KEYPOINT DESCRIPTORS */
 
         cv::Mat descriptors;
-        string descriptorType = "ORB"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
+        
         descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
 
         // push descriptors for current frame to end of data buffer
@@ -209,12 +223,18 @@ int main(int argc, const char *argv[])
 
             vector<cv::DMatch> matches;
             string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
-            string descriptorType = "DES_BINARY"; // DES_BINARY, DES_HOG
+            string descriptorDistType = "DES_BINARY"; // DES_BINARY, DES_HOG
             string selectorType = "SEL_KNN";       // SEL_NN, SEL_KNN
+
+            /* Since SIFT and AKAZE are non binary descriptors, we cannot use Hammond distance to calculate matches */
+            if (descriptorType.compare("SIFT") || descriptorType.compare("AKAZE"))
+            {
+                descriptorDistType = "DES_HOG";
+            }
 
             matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints,
                              (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors,
-                             matches, descriptorType, matcherType, selectorType);
+                             matches, descriptorDistType, matcherType, selectorType);
 
             // store matches in current data frame
             (dataBuffer.end() - 1)->kptMatches = matches;
@@ -258,6 +278,8 @@ int main(int argc, const char *argv[])
                         prevBB = &(*it2);
                     }
                 }
+                //cout << "Current frame lidar point size" << currBB->lidarPoints.size() << endl;
+                //cout << "Previous frame lidar point size" << prevBB->lidarPoints.size() << endl;
 
                 // compute TTC for current match
                 if( currBB->lidarPoints.size()>0 && prevBB->lidarPoints.size()>0 ) // only compute TTC if we have Lidar points
@@ -274,9 +296,10 @@ int main(int argc, const char *argv[])
                     double ttcCamera;
                     clusterKptMatchesWithROI(*currBB, (dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->kptMatches);                    
                     computeTTCCamera((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, currBB->kptMatches, sensorFrameRate, ttcCamera);
+                    detDesc_TTC_Cam.push_back(ttcCamera);
                     //// EOF STUDENT ASSIGNMENT
 
-                    bVis = true;
+                    //bVis = true;
                     if (bVis)
                     {
                         cv::Mat visImg = (dataBuffer.end() - 1)->cameraImg.clone();
@@ -297,11 +320,116 @@ int main(int argc, const char *argv[])
                     bVis = false;
 
                 } // eof TTC computation
-            } // eof loop over all BB matches            
-
+            } // eof loop over all BB matches  
         }
-
     } // eof loop over all images
+
+    if (detectorType.compare("SHITOMASI") == 0)
+    {
+        /* Store the final timing results in a csv */
+        ofstream ttcCamPerfFile;
+        ttcCamPerfFile.open("../Detector_Descriptor_TTC_Camera_Perf.csv", ios::app);
+
+        /* Loop through the detector and descriptor types and print the avg run times for each combination */
+        ttcCamPerfFile << detectorType << "-" << descriptorType;
+        for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
+        {
+            ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
+            //cout << "Avg Run Time for " << detTypes.at(r) << "-" << descTypes.at(0) << ":" << fixed << avgRunTime.at(r) << endl;
+        }
+        ttcCamPerfFile << endl;
+        ttcCamPerfFile.close();
+    }
+    else if (detectorType.compare("HARRIS") == 0)
+    {
+        /* Store the final timing results in a csv */
+        ofstream ttcCamPerfFile;
+        ttcCamPerfFile.open("../Harris_TTC_Camera_Perf.csv", ios::app);
+
+        /* Loop through the detector and descriptor types and print the avg run times for each combination */
+        ttcCamPerfFile << detectorType << "-" << descriptorType;
+        for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
+        {
+            ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
+        }
+        ttcCamPerfFile << endl;
+        ttcCamPerfFile.close();
+    }
+    else if (detectorType.compare("SIFT") == 0)
+    {
+        /* Store the final timing results in a csv */
+        ofstream ttcCamPerfFile;
+        ttcCamPerfFile.open("../Sift_TTC_Camera_Perf.csv", ios::app);
+
+        /* Loop through the detector and descriptor types and print the avg run times for each combination */
+        ttcCamPerfFile << detectorType << "-" << descriptorType;
+        for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
+        {
+            ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
+        }
+        ttcCamPerfFile << endl;
+        ttcCamPerfFile.close();
+    }
+    else if (detectorType.compare("ORB") == 0)
+    {
+        /* Store the final timing results in a csv */
+        ofstream ttcCamPerfFile;
+        ttcCamPerfFile.open("../ORB_TTC_Camera_Perf.csv", ios::app);
+
+        /* Loop through the detector and descriptor types and print the avg run times for each combination */
+        ttcCamPerfFile << detectorType << "-" << descriptorType;
+        for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
+        {
+            ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
+        }
+        ttcCamPerfFile << endl;
+        ttcCamPerfFile.close();
+    }
+    else if (detectorType.compare("AKAZE") == 0)
+    {
+        /* Store the final timing results in a csv */
+        ofstream ttcCamPerfFile;
+        ttcCamPerfFile.open("../Akaze_TTC_Camera_Perf.csv", ios::app);
+
+        /* Loop through the detector and descriptor types and print the avg run times for each combination */
+        ttcCamPerfFile << detectorType << "-" << descriptorType;
+        for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
+        {
+            ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
+        }
+        ttcCamPerfFile << endl;
+        ttcCamPerfFile.close();
+    }
+    else if (detectorType.compare("BRISK") == 0)
+    {
+        /* Store the final timing results in a csv */
+        ofstream ttcCamPerfFile;
+        ttcCamPerfFile.open("../Brisk_TTC_Camera_Perf.csv", ios::app);
+
+        /* Loop through the detector and descriptor types and print the avg run times for each combination */
+        ttcCamPerfFile << detectorType << "-" << descriptorType;
+        for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
+        {
+            ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
+        }
+        ttcCamPerfFile << endl;
+        ttcCamPerfFile.close();
+    }
+    else if (detectorType.compare("FAST") == 0)
+    {
+        /* Store the final timing results in a csv */
+        ofstream ttcCamPerfFile;
+        ttcCamPerfFile.open("../Fast_TTC_Camera_Perf.csv", ios::app);
+
+        /* Loop through the detector and descriptor types and print the avg run times for each combination */
+        ttcCamPerfFile << detectorType << "-" << descriptorType;
+        for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
+        {
+            ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
+        }
+        ttcCamPerfFile << endl;
+        ttcCamPerfFile.close();
+    }
 
     return 0;
 }
