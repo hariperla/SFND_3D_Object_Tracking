@@ -250,3 +250,8 @@ Look for several examples where the Lidar-based TTC estimate is way off.
 ### Task 6 - Peformance Eval Part 2
 
 This last exercise is about running the different detector / descriptor combinations and looking at the differences in TTC estimation
+
+* After running through all combinations of detectors and descriptors we were able to conclude that the Shi-Tomasi detector
+worked best compared to other detectors
+ * Brisk descriptor & Brief descriptor worked better compared to other descriptors using Shi-Tomasi detector
+ * Python notebook attached shows all the plots and which explains our conclusion
