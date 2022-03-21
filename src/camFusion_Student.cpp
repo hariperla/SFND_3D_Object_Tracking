@@ -168,8 +168,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
         medEucDist = eucDists[eucDists.size()/2];
     }
 
-    // Filter out keypoint matches based on the avg distance. 
-    // Use the euclidian distance calculated previously and compare it to average distance to filter outliers
+    // Use the euclidian distance for each point in the bounding box to the median dist to filter outliers
     for (auto matchInBB : matchesInBB)
     {
         if (fabs(cv::norm(kptsPrev[matchInBB.queryIdx].pt - kptsCurr[matchInBB.trainIdx].pt) - medEucDist) <= distThrsh)
