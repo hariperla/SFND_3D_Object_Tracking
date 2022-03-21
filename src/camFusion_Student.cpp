@@ -142,6 +142,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
     double avgDistance = 0.0;
     double sumOfDistances = 0.0;
     vector <cv::DMatch> matchesInBB;
+    vector <float> eucDists;
 
     // Loop through all the keypoint matches and check if they are in both prev and current frame
     for (const auto matches : kptMatches)
@@ -151,6 +152,8 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
             boundingBox.roi.contains(kptsPrev[matches.queryIdx].pt))
         {
             matchesInBB.push_back(matches);
+            // Calculate euclidian distances
+            eucDists.push_back(cv::norm(kptsPrev[matches.queryIdx].pt - kptsCurr[matches.trainIdx].pt));
         }
     }
 
@@ -165,14 +168,16 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
     }
 
     // Filter out keypoint matches based on the avg distance. 
-    // Higher distance means similarity is low and lower means we have similar matches
+    // Use the euclidian distance calculated previously and compare it to average distance to filter outliers
     for (auto matchInBB : matchesInBB)
     {
-        if (matchInBB.distance <= avgDistance)
+        for (size_t i = 0; i < eucDists.size(); i++)
         {
-            boundingBox.kptMatches.push_back(matchInBB);
+            if (eucDists[i] < avgDistance)
+            {
+                boundingBox.kptMatches.push_back(matchInBB);
+            }
         }
-        
     } 
 }
 
@@ -247,15 +252,21 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
                      std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
 {
     // Used this code from lesson
-    double laneWidth = 4.0;
+    double laneWidth = 3.7;
+    double medEucDistPrev = 0.0;
+    double medEucDistCurr = 0.0;
+
+    vector <double> prevLidarPointsX,currLidarPointsX;
+
     // find closest distance to Lidar points within ego lane
     double minXPrev = 1e9, minXCurr = 1e9;
+
     for (auto it = lidarPointsPrev.begin(); it != lidarPointsPrev.end(); ++it)
     {
         // Find lidar points only in the ego lane
         if (abs(it->y) < laneWidth / 2.0)
         {
-            minXPrev = minXPrev > it->x ? it->x : minXPrev;
+            prevLidarPointsX.push_back(it->x);
         }
     }
 
@@ -264,18 +275,42 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
         // Find lidar points only in the ego lane
         if (abs(it->y) < laneWidth / 2.0)
         {
-            minXCurr = minXCurr > it->x ? it->x : minXCurr;
+            currLidarPointsX.push_back(it->x);
         }
     }
 
+    // Sort the previous and current lidar x points
+    sort(prevLidarPointsX.begin(),prevLidarPointsX.end());
+    sort(currLidarPointsX.begin(),currLidarPointsX.end());
+
+    // Calculate previous lidar points euclidean distance
+    if (prevLidarPointsX.size() % 2 == 0)
+    {
+        medEucDistPrev = (prevLidarPointsX[(prevLidarPointsX.size()-1)/2] + prevLidarPointsX[prevLidarPointsX.size()/2])/2.0;
+    }
+    else
+    {
+        medEucDistPrev = prevLidarPointsX[prevLidarPointsX.size()/2];
+    }
+
+    // Calculate current lidar points euclidean distance
+    if (currLidarPointsX.size() % 2 == 0)
+    {
+        medEucDistCurr = (currLidarPointsX[(currLidarPointsX.size()-1)/2] + currLidarPointsX[currLidarPointsX.size()/2])/2.0;
+    }
+    else
+    {
+        medEucDistCurr = currLidarPointsX[currLidarPointsX.size()/2];
+    }
+
     // compute TTC from both measurements
-    TTC = minXCurr * (1.0 / frameRate) / (minXPrev - minXCurr);
+    TTC = medEucDistCurr * (1.0 / frameRate) / (medEucDistPrev - medEucDistCurr);
 }
 
 
 void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bbBestMatches, DataFrame &prevFrame, DataFrame &currFrame)
 {
-    map <int, int> matchBoxes;
+    multimap <int, int> matchBoxes;
 
     /* For every keypoint match in matches verify if it's in both current and previous frame bounding box. */
     /* If yes, collect the boxID's for current and previous Frame bounding boxes */

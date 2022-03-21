@@ -299,7 +299,7 @@ int main(int argc, const char *argv[])
                     detDesc_TTC_Cam.push_back(ttcCamera);
                     //// EOF STUDENT ASSIGNMENT
 
-                    //bVis = true;
+                    bVis = true;
                     if (bVis)
                     {
                         cv::Mat visImg = (dataBuffer.end() - 1)->cameraImg.clone();
@@ -324,112 +324,112 @@ int main(int argc, const char *argv[])
         }
     } // eof loop over all images
 
-    if (detectorType.compare("SHITOMASI") == 0)
-    {
-        /* Store the final timing results in a csv */
-        ofstream ttcCamPerfFile;
-        ttcCamPerfFile.open("../Detector_Descriptor_TTC_Camera_Perf.csv", ios::app);
+    // if (detectorType.compare("SHITOMASI") == 0)
+    // {
+    //     /* Store the final timing results in a csv */
+    //     ofstream ttcCamPerfFile;
+    //     ttcCamPerfFile.open("../Detector_Descriptor_TTC_Camera_Perf.csv", ios::app);
 
-        /* Loop through the detector and descriptor types and print the avg run times for each combination */
-        ttcCamPerfFile << detectorType << "-" << descriptorType;
-        for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
-        {
-            ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
-            //cout << "Avg Run Time for " << detTypes.at(r) << "-" << descTypes.at(0) << ":" << fixed << avgRunTime.at(r) << endl;
-        }
-        ttcCamPerfFile << endl;
-        ttcCamPerfFile.close();
-    }
-    else if (detectorType.compare("HARRIS") == 0)
-    {
-        /* Store the final timing results in a csv */
-        ofstream ttcCamPerfFile;
-        ttcCamPerfFile.open("../Harris_TTC_Camera_Perf.csv", ios::app);
+    //     /* Loop through the detector and descriptor types and print the avg run times for each combination */
+    //     ttcCamPerfFile << detectorType << "-" << descriptorType;
+    //     for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
+    //     {
+    //         ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
+    //         //cout << "Avg Run Time for " << detTypes.at(r) << "-" << descTypes.at(0) << ":" << fixed << avgRunTime.at(r) << endl;
+    //     }
+    //     ttcCamPerfFile << endl;
+    //     ttcCamPerfFile.close();
+    // }
+    // else if (detectorType.compare("HARRIS") == 0)
+    // {
+    //     /* Store the final timing results in a csv */
+    //     ofstream ttcCamPerfFile;
+    //     ttcCamPerfFile.open("../Harris_TTC_Camera_Perf.csv", ios::app);
 
-        /* Loop through the detector and descriptor types and print the avg run times for each combination */
-        ttcCamPerfFile << detectorType << "-" << descriptorType;
-        for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
-        {
-            ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
-        }
-        ttcCamPerfFile << endl;
-        ttcCamPerfFile.close();
-    }
-    else if (detectorType.compare("SIFT") == 0)
-    {
-        /* Store the final timing results in a csv */
-        ofstream ttcCamPerfFile;
-        ttcCamPerfFile.open("../Sift_TTC_Camera_Perf.csv", ios::app);
+    //     /* Loop through the detector and descriptor types and print the avg run times for each combination */
+    //     ttcCamPerfFile << detectorType << "-" << descriptorType;
+    //     for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
+    //     {
+    //         ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
+    //     }
+    //     ttcCamPerfFile << endl;
+    //     ttcCamPerfFile.close();
+    // }
+    // else if (detectorType.compare("SIFT") == 0)
+    // {
+    //     /* Store the final timing results in a csv */
+    //     ofstream ttcCamPerfFile;
+    //     ttcCamPerfFile.open("../Sift_TTC_Camera_Perf.csv", ios::app);
 
-        /* Loop through the detector and descriptor types and print the avg run times for each combination */
-        ttcCamPerfFile << detectorType << "-" << descriptorType;
-        for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
-        {
-            ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
-        }
-        ttcCamPerfFile << endl;
-        ttcCamPerfFile.close();
-    }
-    else if (detectorType.compare("ORB") == 0)
-    {
-        /* Store the final timing results in a csv */
-        ofstream ttcCamPerfFile;
-        ttcCamPerfFile.open("../ORB_TTC_Camera_Perf.csv", ios::app);
+    //     /* Loop through the detector and descriptor types and print the avg run times for each combination */
+    //     ttcCamPerfFile << detectorType << "-" << descriptorType;
+    //     for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
+    //     {
+    //         ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
+    //     }
+    //     ttcCamPerfFile << endl;
+    //     ttcCamPerfFile.close();
+    // }
+    // else if (detectorType.compare("ORB") == 0)
+    // {
+    //     /* Store the final timing results in a csv */
+    //     ofstream ttcCamPerfFile;
+    //     ttcCamPerfFile.open("../ORB_TTC_Camera_Perf.csv", ios::app);
 
-        /* Loop through the detector and descriptor types and print the avg run times for each combination */
-        ttcCamPerfFile << detectorType << "-" << descriptorType;
-        for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
-        {
-            ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
-        }
-        ttcCamPerfFile << endl;
-        ttcCamPerfFile.close();
-    }
-    else if (detectorType.compare("AKAZE") == 0)
-    {
-        /* Store the final timing results in a csv */
-        ofstream ttcCamPerfFile;
-        ttcCamPerfFile.open("../Akaze_TTC_Camera_Perf.csv", ios::app);
+    //     /* Loop through the detector and descriptor types and print the avg run times for each combination */
+    //     ttcCamPerfFile << detectorType << "-" << descriptorType;
+    //     for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
+    //     {
+    //         ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
+    //     }
+    //     ttcCamPerfFile << endl;
+    //     ttcCamPerfFile.close();
+    // }
+    // else if (detectorType.compare("AKAZE") == 0)
+    // {
+    //     /* Store the final timing results in a csv */
+    //     ofstream ttcCamPerfFile;
+    //     ttcCamPerfFile.open("../Akaze_TTC_Camera_Perf.csv", ios::app);
 
-        /* Loop through the detector and descriptor types and print the avg run times for each combination */
-        ttcCamPerfFile << detectorType << "-" << descriptorType;
-        for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
-        {
-            ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
-        }
-        ttcCamPerfFile << endl;
-        ttcCamPerfFile.close();
-    }
-    else if (detectorType.compare("BRISK") == 0)
-    {
-        /* Store the final timing results in a csv */
-        ofstream ttcCamPerfFile;
-        ttcCamPerfFile.open("../Brisk_TTC_Camera_Perf.csv", ios::app);
+    //     /* Loop through the detector and descriptor types and print the avg run times for each combination */
+    //     ttcCamPerfFile << detectorType << "-" << descriptorType;
+    //     for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
+    //     {
+    //         ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
+    //     }
+    //     ttcCamPerfFile << endl;
+    //     ttcCamPerfFile.close();
+    // }
+    // else if (detectorType.compare("BRISK") == 0)
+    // {
+    //     /* Store the final timing results in a csv */
+    //     ofstream ttcCamPerfFile;
+    //     ttcCamPerfFile.open("../Brisk_TTC_Camera_Perf.csv", ios::app);
 
-        /* Loop through the detector and descriptor types and print the avg run times for each combination */
-        ttcCamPerfFile << detectorType << "-" << descriptorType;
-        for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
-        {
-            ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
-        }
-        ttcCamPerfFile << endl;
-        ttcCamPerfFile.close();
-    }
-    else if (detectorType.compare("FAST") == 0)
-    {
-        /* Store the final timing results in a csv */
-        ofstream ttcCamPerfFile;
-        ttcCamPerfFile.open("../Fast_TTC_Camera_Perf.csv", ios::app);
+    //     /* Loop through the detector and descriptor types and print the avg run times for each combination */
+    //     ttcCamPerfFile << detectorType << "-" << descriptorType;
+    //     for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
+    //     {
+    //         ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
+    //     }
+    //     ttcCamPerfFile << endl;
+    //     ttcCamPerfFile.close();
+    // }
+    // else if (detectorType.compare("FAST") == 0)
+    // {
+    //     /* Store the final timing results in a csv */
+    //     ofstream ttcCamPerfFile;
+    //     ttcCamPerfFile.open("../Fast_TTC_Camera_Perf.csv", ios::app);
 
-        /* Loop through the detector and descriptor types and print the avg run times for each combination */
-        ttcCamPerfFile << detectorType << "-" << descriptorType;
-        for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
-        {
-            ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
-        }
-        ttcCamPerfFile << endl;
-        ttcCamPerfFile.close();
-    }
+    //     /* Loop through the detector and descriptor types and print the avg run times for each combination */
+    //     ttcCamPerfFile << detectorType << "-" << descriptorType;
+    //     for (size_t r = 0; r < detDesc_TTC_Cam.size(); r++)
+    //     {
+    //         ttcCamPerfFile << "," << detDesc_TTC_Cam.at(r);
+    //     }
+    //     ttcCamPerfFile << endl;
+    //     ttcCamPerfFile.close();
+    // }
 
     return 0;
 }
