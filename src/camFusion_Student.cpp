@@ -139,8 +139,8 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
 // associate a given bounding box with the keypoints it contains
 void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, std::vector<cv::DMatch> &kptMatches)
 {
-    double avgDistance = 0.0;
-    double sumOfDistances = 0.0;
+    double medEucDist = 0.0;
+    const double distThrsh = 40.0;
     vector <cv::DMatch> matchesInBB;
     vector <float> eucDists;
 
@@ -157,26 +157,24 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
         }
     }
 
-    // Calculate the average distance between matched points within ROI
-    for (const auto matchInBB : matchesInBB)
+    // Calculate the median euclidean distance between matched points within ROI
+    sort(eucDists.begin(),eucDists.end());
+    if (eucDists.size() % 2 == 0)
     {
-        sumOfDistances += matchInBB.distance;
+        medEucDist = (eucDists[(eucDists.size()-1)/2] + eucDists[eucDists.size()/2])/2.0;
     }
-    if (matchesInBB.size() > 0)
+    else
     {
-        avgDistance = sumOfDistances / (matchesInBB.size() * 1.0);
+        medEucDist = eucDists[eucDists.size()/2];
     }
 
     // Filter out keypoint matches based on the avg distance. 
     // Use the euclidian distance calculated previously and compare it to average distance to filter outliers
     for (auto matchInBB : matchesInBB)
     {
-        for (size_t i = 0; i < eucDists.size(); i++)
+        if (fabs(cv::norm(kptsPrev[matchInBB.queryIdx].pt - kptsCurr[matchInBB.trainIdx].pt) - medEucDist) <= distThrsh)
         {
-            if (eucDists[i] < avgDistance)
-            {
-                boundingBox.kptMatches.push_back(matchInBB);
-            }
+            boundingBox.kptMatches.push_back(matchInBB);
         }
     } 
 }
